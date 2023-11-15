@@ -1,4 +1,5 @@
 import pygame as pg;
+from pygame import Vector2;
 from tetromino import Tetromino, TetrominoType;
 
 class Pytris:
@@ -7,18 +8,16 @@ class Pytris:
         self.screen = pg.display.set_mode([300, 600]);
         self.clock = pg.time.Clock();
 
-        self.running = True;
-
         self.game_array = [[0 for col in range(10)] for row in range(20)]
-        for row in self.game_array:
-            print(row);
+        self.falling_tetromino = None;
+        self.running = True;
 
         self.__setup();
         self.__play();
         pg.quit();
 
     def __setup(self):
-        self.test_tet = Tetromino(TetrominoType.I);
+        self.falling_tetromino = Tetromino(TetrominoType.I);
 
     def __play(self):
         while self.running:
@@ -27,7 +26,21 @@ class Pytris:
                 if event.type == pg.QUIT:
                     self.running = False;
 
+            # TODO read slide inputs
+            # TODO read rotation inputs
+
             # Update Logic
+            self.falling_tetromino.fall();
             pg.display.flip();
             self.clock.tick(60);
+
+    def output_grid(self):
+        output = list(self.game_array);
+        tet = self.falling_tetromino.shape;
+        for row in range(len(tet)):
+            for cell in  
+        for block_row in tet:
+            for block in block_row 
+        print(output);
+
 

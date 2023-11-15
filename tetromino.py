@@ -1,4 +1,5 @@
 import pygame as pg;
+from pygame import Vector2;
 import numpy as np;
 from enum import Enum;
 
@@ -53,12 +54,16 @@ class Tetromino(pg.sprite.Sprite):
     def __init__(self, tetromino_type: TetrominoType):
         self.type = tetromino_type;
         self.shape = list(tetromino_type.value); 
+        self.offset = Vector2(0, 0);
 
     def rotate(self, right=True):
         rot_dir = -1 if right else 1;
         self.shape = np.rotate90(self.shape, k=rot_dir);
 
+    def fall(self):
+        self.offset += Vector2(1, 0);
+
     def draw(self, screen):
-        # TODO Update this later
-        # It will crash currently if called
+        # TODO Even needed?
         screen.blit(self.image, self.rect);
+
