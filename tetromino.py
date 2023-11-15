@@ -4,6 +4,11 @@ from enum import Enum;
 
 class TetrominoType(Enum):
 
+    I = [[0, 1, 0, 0],
+         [0, 1, 0, 0],
+         [0, 1, 0, 0],
+         [0, 1, 0, 0]]
+
     O = [[0, 0, 0, 0],
          [0, 1, 1, 0],
          [0, 1, 1, 0],
