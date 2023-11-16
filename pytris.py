@@ -37,12 +37,12 @@ class Pytris:
                     elif event.key == pg.K_DOWN:
                         print("TODO impl down speed up") # TODO
                     elif event.key == pg.K_RIGHT:
-                        self.falling_tetromino.shift(self.block_size, right=True);
+                        self.falling_tetromino.shift(right=True);
                     elif event.key == pg.K_LEFT:
-                        self.falling_tetromino.shift(self.block_size, right=False);
+                        self.falling_tetromino.shift(right=False);
 
             # Update Logic
-            self.falling_tetromino.fall(self.block_size);
+            self.falling_tetromino.fall();
             self.draw_screen();
             pg.display.flip();
             self.clock.tick(1);
@@ -63,11 +63,11 @@ class Pytris:
         # Draw falling tetromino as well
         tet = self.falling_tetromino;
         for row in range(4):
-            board_y = row + tet.offset.y;
+            board_y = (row + tet.offset.y) * self.block_size;
             for col in range(4):
-                board_x = col + tet.offset.x;
+                board_x = (col + tet.offset.x) * self.block_size;
                 if tet.shape[row, col]:
-                    rect = (board_x + col*self.block_size, board_y + row*self.block_size, self.block_size, self.block_size);
+                    rect = (board_x, board_y, self.block_size, self.block_size);
                     self.screen.fill((255, 255, 255), rect);
 
     def output_grid(self):

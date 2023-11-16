@@ -60,7 +60,7 @@ class Tetromino(pg.sprite.Sprite):
         rot_dir = -1 if right else 1;
         self.shape = np.rot90(self.shape, k=rot_dir);
 
-    def shift(self, dist, right=True):
+    def shift(self, right=True):
         left = not right;
 
         # TODO magic numbers are for default size board [20, 10]
@@ -79,10 +79,10 @@ class Tetromino(pg.sprite.Sprite):
             if not np.all(self.shape[:, overflow_col] == 0):
                 x_shift = 0;
 
-        self.offset += Vector2(x_shift*dist, 0);
+        self.offset += Vector2(x_shift, 0);
 
-    def fall(self, dist):
-        self.offset += Vector2(0, dist);
+    def fall(self):
+        self.offset += Vector2(0, 1);
 
     def draw(self, screen):
         # TODO Even needed?
