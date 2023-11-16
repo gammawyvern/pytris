@@ -53,7 +53,7 @@ class Pytris:
                 collision = not self.falling_tetromino.fall();
                 self.fall_counter -= self.fall_speed;
             if collision:
-                self.falling_tetromino = self.__generate_tetromino();
+                self.__place_tetromino();
                 pass;
 
             # Update Logic
@@ -68,10 +68,10 @@ class Pytris:
     def draw_screen(self):
         self.screen.fill((0, 0, 0));
         # Draw all already placed blocks
-        for row in range(20):
+        for row in range(19, -1, -1):
             row_empty = True;
             for cell in range(10):
-                if self.game_array[19-row, cell]:
+                if self.game_array[row, cell]:
                     row_empty = False;
                     rect = (cell*self.block_size, row*self.block_size, self.block_size, self.block_size);
                     self.screen.fill((255, 255, 255), rect);
@@ -89,8 +89,7 @@ class Pytris:
                     rect = (board_x, board_y, self.block_size, self.block_size);
                     self.screen.fill((255, 255, 255), rect);
 
-    def output_grid(self):
-        output = np.copy(self.game_array);
+    def __place_tetromino(self):
         tetromino = self.falling_tetromino;
         cut_shape = np.copy(tetromino.shape);
 
@@ -119,7 +118,6 @@ class Pytris:
         right_bound += 1;
         bottom_bound += 1;
 
-        # Finally overwite
-        # TODO change to draw on screen instead
-        output[top_bound:bottom_bound, left_bound:right_bound] = cut_shape;
-        print(output, '\n');
+        self.game_array[top_bound:bottom_bound, left_bound:right_bound] = cut_shape;
+        print(self.game_array);
+        self.falling_tetromino = self.__generate_tetromino();
