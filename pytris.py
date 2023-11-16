@@ -1,4 +1,5 @@
 import pygame as pg;
+import random;
 from pygame import Vector2;
 from tetromino import Tetromino, TetrominoType;
 import numpy as np;
@@ -24,7 +25,8 @@ class Pytris:
         pg.quit();
 
     def __setup(self):
-        self.falling_tetromino = Tetromino(TetrominoType.I);
+        rand_type = random.choice(list(TetrominoType));
+        self.falling_tetromino = Tetromino(rand_type);
 
     def __play(self):
         while self.running:
