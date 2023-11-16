@@ -81,8 +81,17 @@ class Tetromino(pg.sprite.Sprite):
 
         self.offset += Vector2(x_shift, 0);
 
-    def fall(self):
+    # Return if it fell
+    def fall(self) -> bool:
+        # TODO for now just deal with bottom of board
+        bottom_bound = int(self.offset.y + 3);
+        if bottom_bound >= 19:
+            overflow_row = 3 - (abs(19 - bottom_bound));
+            if not np.all(self.shape[overflow_row:4, :] == 0):
+                return False;
+
         self.offset += Vector2(0, 1);
+        return True;
 
     def draw(self, screen):
         # TODO Even needed?

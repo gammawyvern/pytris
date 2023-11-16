@@ -25,8 +25,7 @@ class Pytris:
         pg.quit();
 
     def __setup(self):
-        rand_type = random.choice(list(TetrominoType));
-        self.falling_tetromino = Tetromino(rand_type);
+        self.falling_tetromino = self.__generate_tetromino();
 
     def __play(self):
         while self.running:
@@ -49,13 +48,22 @@ class Pytris:
             self.fall_counter += self.clock.tick(60);
 
             # Update based on speed
+            collision = False;
             if self.fall_counter >= self.fall_speed:
-                self.falling_tetromino.fall();
+                collision = not self.falling_tetromino.fall();
                 self.fall_counter -= self.fall_speed;
+            if collision:
+                self.falling_tetromino = self.__generate_tetromino();
+                pass;
 
             # Update Logic
             self.draw_screen();
             pg.display.flip();
+
+    def __generate_tetromino(self) -> Tetromino:
+        # TODO implement bucket randomness
+        rand_type = random.choice(list(TetrominoType));
+        return Tetromino(rand_type);
 
     def draw_screen(self):
         self.screen.fill((0, 0, 0));
