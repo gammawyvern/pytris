@@ -9,13 +9,12 @@ class Pytris:
         self.screen = pg.display.set_mode([300, 600]);
         self.clock = pg.time.Clock();
 
-        self.game_array = np.zeros((20, 10));
         self.falling_tetromino = None;
         self.running = True;
 
         # Screen/Draw info
-        self.play_area_offset = Vector2(0, 0);
-        self.block_size = 10;
+        self.game_array = np.zeros((20, 10));
+        self.block_size = 30;
 
         self.__setup();
         self.__play();
@@ -48,6 +47,7 @@ class Pytris:
             self.clock.tick(1);
 
     def draw_screen(self):
+        self.screen.fill((0, 0, 0));
         # Draw all already placed blocks
         for row in range(20):
             row_empty = True;
