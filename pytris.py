@@ -10,6 +10,9 @@ class Pytris:
         self.clock = pg.time.Clock();
 
         self.falling_tetromino = None;
+        self.fps = 120;
+        self.fall_speed = 1000;
+        self.fall_counter = 0;
         self.running = True;
 
         # Screen/Draw info
@@ -40,11 +43,17 @@ class Pytris:
                     elif event.key == pg.K_LEFT:
                         self.falling_tetromino.shift(right=False);
 
+            # Update counter from delta time
+            self.fall_counter += self.clock.tick(60);
+
+            # Update based on speed
+            if self.fall_counter >= self.fall_speed:
+                self.falling_tetromino.fall();
+                self.fall_counter -= self.fall_speed;
+
             # Update Logic
-            self.falling_tetromino.fall();
             self.draw_screen();
             pg.display.flip();
-            self.clock.tick(1);
 
     def draw_screen(self):
         self.screen.fill((0, 0, 0));
