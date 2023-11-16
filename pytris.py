@@ -13,6 +13,10 @@ class Pytris:
         self.falling_tetromino = None;
         self.running = True;
 
+        # Screen/Draw info
+        self.play_area_offset = Vector2(0, 0);
+        self.block_size = 10;
+
         self.__setup();
         self.__play();
         pg.quit();
@@ -33,15 +37,38 @@ class Pytris:
                     elif event.key == pg.K_DOWN:
                         print("TODO impl down speed up") # TODO
                     elif event.key == pg.K_RIGHT:
-                        self.falling_tetromino.shift(right=True);
+                        self.falling_tetromino.shift(self.block_size, right=True);
                     elif event.key == pg.K_LEFT:
-                        self.falling_tetromino.shift(right=False);
+                        self.falling_tetromino.shift(self.block_size, right=False);
 
             # Update Logic
-            self.falling_tetromino.fall();
+            self.falling_tetromino.fall(self.block_size);
+            self.draw_screen();
             pg.display.flip();
-            self.output_grid();
             self.clock.tick(1);
+
+    def draw_screen(self):
+        # Draw all already placed blocks
+        for row in range(20):
+            row_empty = True;
+            for cell in range(10):
+                if self.game_array[19-row, cell]:
+                    row_empty = False;
+                    rect = (cell*self.block_size, row*self.block_size, self.block_size, self.block_size);
+                    self.screen.fill((255, 255, 255), rect);
+            # If row empty, nothing above
+            if row_empty:
+                break;
+
+        # Draw falling tetromino as well
+        tet = self.falling_tetromino;
+        for row in range(4):
+            board_y = row + tet.offset.y;
+            for col in range(4):
+                board_x = col + tet.offset.x;
+                if tet.shape[row, col]:
+                    rect = (board_x + col*self.block_size, board_y + row*self.block_size, self.block_size, self.block_size);
+                    self.screen.fill((255, 255, 255), rect);
 
     def output_grid(self):
         output = np.copy(self.game_array);
