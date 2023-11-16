@@ -71,8 +71,8 @@ class Tetromino(pg.sprite.Sprite):
         left_bound = int(self.offset.x);
         right_bound = int(self.offset.x + 3);
         if left and left_bound <= 0:
-            overflow_col = abs(left_bound);
-            if not np.all(self.shape[:, overflow_col:4] == 0):
+            overflow_col = 1 + abs(left_bound);
+            if not np.all(self.shape[:, 0:overflow_col] == 0):
                 x_shift = 0;
         elif right and right_bound >= 9:
             overflow_col = 3 - abs(9 - right_bound);
