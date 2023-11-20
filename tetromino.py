@@ -41,8 +41,8 @@ class TetrominoType(Enum):
          [0, 0, 0, 0]];
 
 class Tetromino(pg.sprite.Sprite):
-    def __init__(self, tetromino_type: TetrominoType, board):
-        self.board = board;
+    def __init__(self, tetromino_type: TetrominoType, game):
+        self.game = game;
         self.type = tetromino_type;
         self.shape = np.copy(tetromino_type.value); 
         self.offset = Vector2(0, 0);
@@ -58,19 +58,37 @@ class Tetromino(pg.sprite.Sprite):
     # Return if it fell
     def fall(self) -> bool:
         # TODO reimplement
+
+        # Find row bottom of piece
+        bottom_row = 3;
+        while np.all(self.shape[bottom_row] == 0) and bottom_row >= 0:
+            bottom_row -= 1;
+        # Check for bottom of board
+        if (self.offset.y + bottom_row) >= (self.game.height - 1):
+            return False;
+
+        # Check for another piece
+        for row in range(4):
+            for col in range(4):
+                cell_x = (self.offset.x + col) % self.game.width;  
+                cell_y = (self.offset.y + row);
+                if (self.shape[row, col] == 1 and
+                    self.game.game_board[int(cell_y + 1), int(cell_x)] == 1):
+                    return False;
+
         self.offset += Vector2(0, 1);
         return True;
 
     @property
     def offset(self):
         return Vector2(
-            self.__offset.x % self.board.width,
-            self.__offset.y % self.board.height,
+            self.__offset.x % self.game.width,
+            self.__offset.y % self.game.height,
         );
 
     @offset.setter
     def offset(self, val):
         self.__offset = Vector2(
-            val.x % self.board.width,
-            val.y % self.board.height,
+            val.x % self.game.width,
+            val.y % self.game.height,
         );

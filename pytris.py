@@ -31,9 +31,8 @@ class Pytris:
 
     def __play(self):
         while self.running:
-            # Read events
+            # Input reading
             for event in pg.event.get():
-                # If QUIT, stop game
                 if event.type == pg.QUIT:
                     self.running = False;
                 elif event.type == pg.KEYDOWN:
@@ -47,6 +46,8 @@ class Pytris:
                         self.falling_tetromino.shift(right=False);
                     elif event.key == pg.K_SPACE:
                         self.__place_tetromino();
+                    elif event.key == pg.K_ESCAPE:
+                        self.running = False;
 
             # Update counter from delta time
             self.fall_counter += self.clock.tick(60);
