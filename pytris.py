@@ -33,9 +33,9 @@ class Pytris:
         while self.running:
             # Read events
             for event in pg.event.get():
+                # If QUIT, stop game
                 if event.type == pg.QUIT:
                     self.running = False;
-
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_UP:
                         self.falling_tetromino.rotate();
@@ -65,21 +65,17 @@ class Pytris:
     def __generate_tetromino(self) -> Tetromino:
         # TODO implement bucket randomness
         rand_type = random.choice(list(TetrominoType));
-        return Tetromino(rand_type);
+        return Tetromino(rand_type, self);
 
     def draw_screen(self):
         self.screen.fill((0, 0, 0));
+
         # Draw all already placed blocks
-        for row in range(19, -1, -1):
-            row_empty = True;
-            for cell in range(10):
+        for row in range(self.height):
+            for cell in range(self.width):
                 if self.game_array[row, cell]:
-                    row_empty = False;
                     rect = (cell*self.block_size, row*self.block_size, self.block_size, self.block_size);
                     self.screen.fill((255, 255, 255), rect);
-            # If row empty, nothing above
-            if row_empty:
-                break;
 
         # Draw falling tetromino as well
         tet = self.falling_tetromino;
