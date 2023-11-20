@@ -21,6 +21,7 @@ class Pytris:
         self.clock = pg.time.Clock();
 
         # Misc setup
+        self.bucket = list(TetrominoType);
         self.falling_tetromino = self.__generate_tetromino();
         self.fps = 120;
         self.fall_speed = 1000;
@@ -72,8 +73,12 @@ class Pytris:
             pg.display.flip();
 
     def __generate_tetromino(self) -> Tetromino:
-        # TODO implement bucket randomness
-        rand_type = random.choice(list(TetrominoType));
+        if len(self.bucket) == 0:
+            self.bucket = list(TetrominoType);
+
+        rand_type = random.choice(self.bucket);
+        self.bucket.remove(rand_type);
+
         return Tetromino(rand_type, self);
 
     def draw_screen(self):
@@ -114,7 +119,7 @@ class Pytris:
 
     def __check_board(self):
         for row in range(self.height):
-            if np.all(self.game_board[row] == None):
+            if np.all(self.game_board[row] != None):
                 # TODO this may break at the very top row????
                 self.game_board[1:row+1, :] = self.game_board[0:row, :];
                 self.game_board[0, :] = None;
