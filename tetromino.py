@@ -5,46 +5,54 @@ from enum import Enum;
 
 class TetrominoType(Enum):
 
-    I = [[0, 1, 0, 0],
+    I = ([[0, 1, 0, 0],
          [0, 1, 0, 0],
          [0, 1, 0, 0],
-         [0, 1, 0, 0]];
+         [0, 1, 0, 0]],
+         (0, 128, 128));
 
-    O = [[0, 0, 0, 0],
+    O = ([[0, 0, 0, 0],
          [0, 1, 1, 0],
          [0, 1, 1, 0],
-         [0, 0, 0, 0]];
+         [0, 0, 0, 0]],
+         (128, 128, 0));
 
-    L = [[0, 0, 1, 0],
+    L = ([[0, 0, 1, 0],
          [1, 1, 1, 0],
          [0, 0, 0, 0],
-         [0, 0, 0, 0]];
+         [0, 0, 0, 0]],
+         (155, 100, 0));
 
-    J = [[1, 0, 0, 0],
+    J = ([[1, 0, 0, 0],
          [1, 1, 1, 0],
          [0, 0, 0, 0],
-         [0, 0, 0, 0]];
+         [0, 0, 0, 0]],
+         (0, 0, 255));
 
-    T = [[0, 1, 0, 0],
+    T = ([[0, 1, 0, 0],
          [1, 1, 1, 0],
          [0, 0, 0, 0],
-         [0, 0, 0, 0]];
+         [0, 0, 0, 0]],
+         (128, 0, 128));
 
-    S = [[0, 1, 1, 0],
+    S = ([[0, 1, 1, 0],
          [1, 1, 0, 0],
          [0, 0, 0, 0],
-         [0, 0, 0, 0]];
+         [0, 0, 0, 0]],
+         (0, 255, 0));
 
-    Z = [[1, 1, 0, 0],
+    Z = ([[1, 1, 0, 0],
          [0, 1, 1, 0],
          [0, 0, 0, 0],
-         [0, 0, 0, 0]];
+         [0, 0, 0, 0]],
+         (255, 0, 0));
 
 class Tetromino(pg.sprite.Sprite):
     def __init__(self, tetromino_type: TetrominoType, game):
         self.game = game;
         self.type = tetromino_type;
-        self.shape = np.copy(tetromino_type.value); 
+        self.shape = np.copy(tetromino_type.value[0]); 
+        self.color = tetromino_type.value[1];
         self.offset = Vector2((self.game.width/2)-2, 0);
 
     def rotate(self, right=True):
@@ -73,7 +81,7 @@ class Tetromino(pg.sprite.Sprite):
                 cell_x = (self.offset.x + col) % self.game.width;  
                 cell_y = (self.offset.y + row);
                 if (self.shape[row, col] == 1 and
-                    self.game.game_board[int(cell_y + 1), int(cell_x)] == 1):
+                    self.game.game_board[int(cell_y + 1), int(cell_x)]):
                     return False;
 
         self.offset += Vector2(0, 1);
@@ -92,3 +100,6 @@ class Tetromino(pg.sprite.Sprite):
             val.x % self.game.width,
             val.y % self.game.height,
         );
+
+
+
