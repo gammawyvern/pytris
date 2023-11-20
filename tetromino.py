@@ -45,7 +45,7 @@ class Tetromino(pg.sprite.Sprite):
         self.game = game;
         self.type = tetromino_type;
         self.shape = np.copy(tetromino_type.value); 
-        self.offset = Vector2(0, 0);
+        self.offset = Vector2((self.game.width/2)-2, 0);
 
     def rotate(self, right=True):
         rot_dir = -1 if right else 1;
