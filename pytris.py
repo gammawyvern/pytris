@@ -5,27 +5,29 @@ from tetromino import Tetromino, TetrominoType;
 import numpy as np;
 
 class Pytris:
-    def __init__(self):
+    def __init__(self, board_size: Vector2):
+        # Board setup
+        self.width = int(board_size.x);
+        self.height = int(board_size.y);
+        self.game_array = np.zeros((self.height, self.width));
+
+        # PyGame / Graphics setup
         pg.init();
-        self.screen = pg.display.set_mode([300, 600]);
+        self.block_size = 30;
+        self.screen = pg.display.set_mode([
+            self.block_size*self.width,
+            self.block_size*self.height]);
         self.clock = pg.time.Clock();
 
-        self.falling_tetromino = None;
+        # Misc setup
+        self.falling_tetromino = self.__generate_tetromino();
         self.fps = 120;
         self.fall_speed = 1000;
         self.fall_counter = 0;
         self.running = True;
 
-        # Screen/Draw info
-        self.game_array = np.zeros((20, 10));
-        self.block_size = 30;
-
-        self.__setup();
         self.__play();
         pg.quit();
-
-    def __setup(self):
-        self.falling_tetromino = self.__generate_tetromino();
 
     def __play(self):
         while self.running:
@@ -90,34 +92,5 @@ class Pytris:
                     self.screen.fill((255, 255, 255), rect);
 
     def __place_tetromino(self):
-        tetromino = self.falling_tetromino;
-        cut_shape = np.copy(tetromino.shape);
+        pass;
 
-        # Setup board bounds
-        left_bound = int(tetromino.offset.x);
-        right_bound = int(tetromino.offset.x + 3);
-        top_bound = int(tetromino.offset.y);
-        bottom_bound = int(tetromino.offset.y + 3); 
-
-        # Remove oob from shape
-        if left_bound < 0:
-            cut_shape = cut_shape[:, abs(left_bound):4];
-            left_bound = 0;
-        elif right_bound > 9:
-            cut_shape = cut_shape[:, 0:(4 - abs(9 - right_bound))];
-            right_bound = 9;
-
-        if top_bound < 0:
-            cut_shape = cut_shape[abs(top_bound):4, :];
-            top_bound = 0;
-        elif bottom_bound > 19:
-            cut_shape = cut_shape[0:(4 - abs(19 - bottom_bound)), :];
-            bottom_bound = 19;
-
-        # Account for exclusivity
-        right_bound += 1;
-        bottom_bound += 1;
-
-        self.game_array[top_bound:bottom_bound, left_bound:right_bound] = cut_shape;
-        print(self.game_array);
-        self.falling_tetromino = self.__generate_tetromino();
