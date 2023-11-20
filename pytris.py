@@ -9,7 +9,7 @@ class Pytris:
         # Board setup
         self.width = int(board_size.x);
         self.height = int(board_size.y);
-        self.game_array = np.zeros((self.height, self.width));
+        self.game_board = np.zeros((self.height, self.width));
 
         # PyGame / Graphics setup
         pg.init();
@@ -45,6 +45,8 @@ class Pytris:
                         self.falling_tetromino.shift(right=True);
                     elif event.key == pg.K_LEFT:
                         self.falling_tetromino.shift(right=False);
+                    elif event.key == pg.K_SPACE:
+                        self.__place_tetromino();
 
             # Update counter from delta time
             self.fall_counter += self.clock.tick(60);
@@ -72,21 +74,33 @@ class Pytris:
 
         # Draw all already placed blocks
         for row in range(self.height):
-            for cell in range(self.width):
-                if self.game_array[row, cell]:
-                    rect = (cell*self.block_size, row*self.block_size, self.block_size, self.block_size);
+            for col in range(self.width):
+                if self.game_board[row, col]:
+                    rect = (col*self.block_size, row*self.block_size, self.block_size, self.block_size);
                     self.screen.fill((255, 255, 255), rect);
 
         # Draw falling tetromino as well
         tet = self.falling_tetromino;
         for row in range(4):
-            board_y = (row + tet.offset.y) * self.block_size;
+            board_y = (tet.offset.y + row) % self.height;
+            board_y *= self.block_size;
             for col in range(4):
-                board_x = (col + tet.offset.x) * self.block_size;
+                board_x = (tet.offset.x + col) % self.width;
+                board_x *= self.block_size;
+                
                 if tet.shape[row, col]:
                     rect = (board_x, board_y, self.block_size, self.block_size);
                     self.screen.fill((255, 255, 255), rect);
 
     def __place_tetromino(self):
-        pass;
+        tet = self.falling_tetromino;
+        for row in range(4):
+            board_y = (tet.offset.y + row) % self.height;
+            for col in range(4):
+                board_x = (tet.offset.x + col) % self.width;
+                
+                if tet.shape[row, col]:
+                    self.game_board[int(board_y), int(board_x)] = 1;
+
+        self.falling_tetromino = self.__generate_tetromino();
 
