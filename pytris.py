@@ -106,5 +106,13 @@ class Pytris:
                 if tet.shape[row, col]:
                     self.game_board[int(board_y), int(board_x)] = 1;
 
+        self.__check_board();
         self.falling_tetromino = self.__generate_tetromino();
+
+    def __check_board(self):
+        for row in range(self.height):
+            if np.all(self.game_board[row] == 1):
+                # TODO this may break at the very top row????
+                self.game_board[1:row+1, :] = self.game_board[0:row, :];
+                self.game_board[0, :] = 0;
 
