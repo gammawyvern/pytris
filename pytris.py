@@ -45,6 +45,8 @@ class Pytris:
                     elif event.key == pg.K_LEFT:
                         self.falling_tetromino.shift(right=False);
                     elif event.key == pg.K_SPACE:
+                        while self.falling_tetromino.fall():
+                            pass;
                         self.__place_tetromino();
                     elif event.key == pg.K_ESCAPE:
                         self.running = False;
