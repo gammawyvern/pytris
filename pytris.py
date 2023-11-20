@@ -39,7 +39,7 @@ class Pytris:
                     if event.key == pg.K_UP:
                         self.falling_tetromino.rotate();
                     elif event.key == pg.K_DOWN:
-                        print("TODO impl down speed up") # TODO
+                        self.fall_speed /= 3;
                     elif event.key == pg.K_RIGHT:
                         self.falling_tetromino.shift(right=True);
                     elif event.key == pg.K_LEFT:
@@ -48,6 +48,9 @@ class Pytris:
                         self.__place_tetromino();
                     elif event.key == pg.K_ESCAPE:
                         self.running = False;
+                elif event.type == pg.KEYUP:
+                    if event.key == pg.K_DOWN:
+                        self.fall_speed *= 3;
 
             # Update counter from delta time
             self.fall_counter += self.clock.tick(60);
