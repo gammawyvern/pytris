@@ -116,6 +116,7 @@ class Pytris:
 
         self.__check_board();
         self.falling_tetromino = self.__generate_tetromino();
+        self.fall_counter = 0;
 
     def __check_board(self):
         for row in range(self.height):
