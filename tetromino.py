@@ -55,6 +55,12 @@ class Tetromino:
         self.shape = np.copy(tetromino_type.value[0]); 
         self.color = tetromino_type.value[1];
         self.offset = Vector2((self.game.width/2)-2, 0);
+
+    ####################################
+    # Public movement wrapper functions.
+    # Only moves Tetromino if movement
+    # is valid.
+    ####################################
  
     def fall(self, right=True) -> bool:
         return self.__move_with_collision(Tetromino.__fall, right=right);
@@ -65,8 +71,12 @@ class Tetromino:
     def shift(self, right=True) -> bool:
         return self.__move_with_collision(Tetromino.__shift, right=right);
 
-    # Perform movement on copy and then look for collisions
-    # movement is a function (either rotate(), shift(), or fall())
+    ####################################
+    # Safe movement function. Ensures
+    # there will be no collisions
+    # before performing movement.
+    ####################################
+
     def __move_with_collision(self, move_func, right=True) -> bool:
         copy_tet: Tetromino = copy.copy(self);
         move_func(copy_tet, right=right);
@@ -88,6 +98,14 @@ class Tetromino:
         move_func(self, right=right);
         return True;
 
+    ####################################
+    # Private movement functions
+    # (Unsafe!). Call public versions
+    # instead, which use
+    # __move_with_collision() to
+    # check if movement is valid.
+    ####################################
+
     def __fall(self, right=True):
         self.offset += Vector2(0, 1);
 
@@ -98,6 +116,10 @@ class Tetromino:
     def __shift(self, right=True):
         x_shift = 1 if right else -1;
         self.offset += Vector2(x_shift, 0);
+
+    ####################################
+    # Getters / Setters
+    ####################################
 
     @property
     def offset(self):
