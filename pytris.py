@@ -120,7 +120,6 @@ class Pytris:
     def __check_board(self):
         for row in range(self.height):
             if np.all(self.game_board[row] != None):
-                # TODO this may break at the very top row????
                 self.game_board[1:row+1, :] = self.game_board[0:row, :];
                 self.game_board[0, :] = None;
 
