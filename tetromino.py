@@ -61,12 +61,21 @@ class Tetromino(pg.sprite.Sprite):
 
     def shift(self, right=True):
         x_shift = 1 if right else -1;
+
+        # Check for another piece
+        for row in range(4):
+            for col in range(4):
+                # Pos of potential collision
+                cell_x = (self.offset.x + col + x_shift) % self.game.width;  
+                cell_y = (self.offset.y + row);
+                if (self.shape[row, col] == 1 and
+                    self.game.game_board[int(cell_y), int(cell_x)]):
+                    return;
+
         self.offset += Vector2(x_shift, 0);
 
     # Return if it fell
     def fall(self) -> bool:
-        # TODO reimplement
-
         # Find row bottom of piece
         bottom_row = 3;
         while np.all(self.shape[bottom_row] == 0) and bottom_row >= 0:
@@ -78,10 +87,11 @@ class Tetromino(pg.sprite.Sprite):
         # Check for another piece
         for row in range(4):
             for col in range(4):
+                # Pos of potential collision
                 cell_x = (self.offset.x + col) % self.game.width;  
-                cell_y = (self.offset.y + row);
+                cell_y = (self.offset.y + row + 1);
                 if (self.shape[row, col] == 1 and
-                    self.game.game_board[int(cell_y + 1), int(cell_x)]):
+                    self.game.game_board[int(cell_y), int(cell_x)]):
                     return False;
 
         self.offset += Vector2(0, 1);
