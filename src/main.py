@@ -1,4 +1,4 @@
-from pytris import Pytris;
-from pygame import Vector2;
+import pygame as pg;
+import pytris;
 
-game = Pytris(Vector2(10, 20));
+game = pytris.Pytris(pg.Vector2(10, 20));

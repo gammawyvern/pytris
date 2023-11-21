@@ -1,11 +1,10 @@
 import pygame as pg;
-import random;
-from pygame import Vector2;
-from tetromino import Tetromino, TetrominoType;
 import numpy as np;
+import random;
+import tetromino;
 
 class Pytris:
-    def __init__(self, board_size: Vector2):
+    def __init__(self, board_size: pg.Vector2):
         # Board setup
         self.width = int(board_size.x);
         self.height = int(board_size.y);
@@ -23,7 +22,7 @@ class Pytris:
         self.clock = pg.time.Clock();
 
         # Misc setup
-        self.bucket = list(TetrominoType);
+        self.bucket = list(tetromino.TetrominoType);
         self.falling_tetromino = self.__generate_tetromino();
         self.fps = 120;
         self.fall_speed = 1000;
@@ -71,14 +70,14 @@ class Pytris:
             self.draw_screen();
             pg.display.flip();
 
-    def __generate_tetromino(self) -> Tetromino:
+    def __generate_tetromino(self) -> tetromino.Tetromino:
         if len(self.bucket) == 0:
-            self.bucket = list(TetrominoType);
+            self.bucket = list(tetromino.TetrominoType);
 
         rand_type = random.choice(self.bucket);
         self.bucket.remove(rand_type);
 
-        return Tetromino(rand_type, self);
+        return tetromino.Tetromino(rand_type, self);
 
     def draw_screen(self):
         self.screen.fill(self.background_color);

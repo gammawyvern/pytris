@@ -1,10 +1,9 @@
 import pygame as pg;
-from pygame import Vector2;
 import numpy as np;
-from enum import Enum;
+import enum;
 import copy;
 
-class TetrominoType(Enum):
+class TetrominoType(enum.Enum):
 
     I = ([[0, 1, 0, 0],
           [0, 1, 0, 0],
@@ -54,7 +53,7 @@ class Tetromino:
         self.type = tetromino_type;
         self.shape = np.copy(tetromino_type.value[0]); 
         self.color = tetromino_type.value[1];
-        self.offset = Vector2((self.game.width/2)-2, 0);
+        self.offset = pg.Vector2((self.game.width/2)-2, 0);
 
     ####################################
     # Public movement wrapper functions.
@@ -107,7 +106,7 @@ class Tetromino:
     ####################################
 
     def __fall(self, right=True):
-        self.offset += Vector2(0, 1);
+        self.offset += pg.Vector2(0, 1);
 
     def __rotate(self, right=True):
         rot_dir = -1 if right else 1;
@@ -115,7 +114,7 @@ class Tetromino:
 
     def __shift(self, right=True):
         x_shift = 1 if right else -1;
-        self.offset += Vector2(x_shift, 0);
+        self.offset += pg.Vector2(x_shift, 0);
 
     ####################################
     # Getters / Setters
@@ -123,14 +122,14 @@ class Tetromino:
 
     @property
     def offset(self):
-        return Vector2(
+        return pg.Vector2(
             self.__offset.x,
             self.__offset.y,
         );
 
     @offset.setter
     def offset(self, val):
-        self.__offset = Vector2(
+        self.__offset = pg.Vector2(
             val.x,
             val.y,
         );
