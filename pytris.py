@@ -9,7 +9,6 @@ class Pytris:
         # Board setup
         self.width = int(board_size.x);
         self.height = int(board_size.y);
-        # Why does this work like this?????????
         self.game_board = np.full((self.height, self.width), None, dtype=tuple);
 
         # PyGame / Graphics setup

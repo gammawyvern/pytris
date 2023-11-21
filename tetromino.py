@@ -57,7 +57,21 @@ class Tetromino(pg.sprite.Sprite):
 
     def rotate(self, right=True):
         rot_dir = -1 if right else 1;
-        self.shape = np.rot90(self.shape, k=rot_dir);
+        rot_shape = np.rot90(self.shape, k=rot_dir);
+
+        # Check for collisions
+        for row in range(4):
+            for col in range(4):
+                cell_x = (self.offset.x + col) % self.game.width;  
+                cell_y = (self.offset.y + row);
+                # TODO also need to check for vertical problems 
+                if (rot_shape[row, col] == 1 and
+                    self.game.game_board[int(cell_y), int(cell_x)]):
+                    # TODO implement actual rotational logic/collisions
+                    return;
+        
+        self.shape = rot_shape;
+
 
     def shift(self, right=True):
         x_shift = 1 if right else -1;
@@ -66,8 +80,11 @@ class Tetromino(pg.sprite.Sprite):
         for row in range(4):
             for col in range(4):
                 # Pos of potential collision
-                cell_x = (self.offset.x + col + x_shift) % self.game.width;  
+                cell_x = (self.offset.x + col + x_shift);  
                 cell_y = (self.offset.y + row);
+                if (self.shape[row, col] == 1 and
+                    (cell_x >= self.game.width or cell_x < 0)):
+                    return;
                 if (self.shape[row, col] == 1 and
                     self.game.game_board[int(cell_y), int(cell_x)]):
                     return;
@@ -100,15 +117,17 @@ class Tetromino(pg.sprite.Sprite):
     @property
     def offset(self):
         return Vector2(
-            self.__offset.x % self.game.width,
-            self.__offset.y % self.game.height,
+            # TODO for now remove % self.game.width/height
+            self.__offset.x,
+            self.__offset.y,
         );
 
     @offset.setter
     def offset(self, val):
+        # TODO for now remove % self.game.width/height
         self.__offset = Vector2(
-            val.x % self.game.width,
-            val.y % self.game.height,
+            val.x,
+            val.y,
         );
 
 
