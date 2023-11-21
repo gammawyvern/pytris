@@ -71,19 +71,18 @@ class Tetromino:
         copy_tet: Tetromino = copy.copy(self);
         move_func(copy_tet, right=right);
 
-        # Check for collisions
-        for row in range(4):
-            for col in range(4):
-                cell_x = copy_tet.offset.x + col;
-                cell_y = copy_tet.offset.y + row;
-                # Check for out of bounds
-                if (copy_tet.shape[row, col] == 1 and
-                    (cell_x >= copy_tet.game.width or cell_x < 0 or
-                     cell_y >= copy_tet.game.height or cell_y < 0)):
+        for row_index, row in enumerate(copy_tet.shape):
+            for col_index, cell in enumerate(row):
+                board_x = int(copy_tet.offset.x + col_index);
+                board_y = int(copy_tet.offset.y + row_index);
+
+                # Out of bounds detection
+                oob_hori = board_x < 0 or board_x >= copy_tet.game.width;
+                oob_vert = board_y < 0 or board_y >= copy_tet.game.height;
+                if (cell == 1 and (oob_hori or oob_vert)):
                     return False;
-                # Check for other blocks
-                if (copy_tet.shape[row, col] == 1 and
-                    copy_tet.game.game_board[int(cell_y), int(cell_x)]):
+                # Other board blocks detection
+                if (cell == 1 and copy_tet.game.game_board[board_y, board_x]):
                     return False;
         
         move_func(self, right=right);
