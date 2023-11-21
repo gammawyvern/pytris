@@ -62,12 +62,16 @@ class Tetromino(pg.sprite.Sprite):
         # Check for collisions
         for row in range(4):
             for col in range(4):
-                cell_x = (self.offset.x + col) % self.game.width;  
+                cell_x = (self.offset.x + col);
                 cell_y = (self.offset.y + row);
-                # TODO also need to check for vertical problems 
+                if (rot_shape[row, col] == 1 and
+                    (cell_x >= self.game.width or cell_x < 0 or
+                     cell_y >= self.game.height or cell_y < 0)):
+                    # TODO add rotation logic instead of just stopping it alltogther
+                    return;
                 if (rot_shape[row, col] == 1 and
                     self.game.game_board[int(cell_y), int(cell_x)]):
-                    # TODO implement actual rotational logic/collisions
+                    # TODO add rotation logic instead of just stopping it alltogther
                     return;
         
         self.shape = rot_shape;
