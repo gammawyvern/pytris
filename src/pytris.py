@@ -8,62 +8,63 @@ class Pytris:
         # Board setup
         self.__width = int(board_size.x);
         self.__height = int(board_size.y);
+        # Board is array of colors (or None)
         self.__game_board = np.full((self.__height, self.__width), None, dtype=tuple);
 
         # PyGame / Graphics setup
         pg.init();
-        self.background_color = (25, 25, 25);
-        self.block_size = 30;
+        self.__background_color = (25, 25, 25);
+        self.__block_size = 30;
         # I like how it looks with just gaps between blocks
-        self.block_border_color = self.background_color;
-        self.screen = pg.display.set_mode([
-            self.__width*self.block_size,
-            self.__height*self.block_size]);
-        self.clock = pg.time.Clock();
+        self.__block_border_color = self.__background_color;
+        self.__screen = pg.display.set_mode([
+            self.__width*self.__block_size,
+            self.__height*self.__block_size]);
+        self.__clock = pg.time.Clock();
 
         # Misc setup
-        self.bucket = list(tetromino.TetrominoType);
-        self.falling_tetromino = self.__generate_tetromino();
-        self.fps = 120;
-        self.fall_speed = 1000;
-        self.fall_counter = 0;
-        self.running = True;
+        self.__bucket = list(tetromino.TetrominoType);
+        self.__falling_tetromino = self.__generate_tetromino();
+        self.__fps = 120;
+        self.__fall_speed = 1000;
+        self.__fall_counter = 0;
+        self.__running = True;
 
         self.__play();
         pg.quit();
 
     def __play(self):
-        while self.running:
+        while self.__running:
             # Input reading
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    self.running = False;
+                    self.__running = False;
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_UP:
-                        self.falling_tetromino.rotate();
+                        self.__falling_tetromino.rotate();
                     elif event.key == pg.K_DOWN:
-                        self.fall_speed /= 3;
+                        self.__fall_speed /= 3;
                     elif event.key == pg.K_RIGHT:
-                        self.falling_tetromino.shift(right=True);
+                        self.__falling_tetromino.shift(right=True);
                     elif event.key == pg.K_LEFT:
-                        self.falling_tetromino.shift(right=False);
+                        self.__falling_tetromino.shift(right=False);
                     elif event.key == pg.K_SPACE:
-                        while self.falling_tetromino.fall():
+                        while self.__falling_tetromino.fall():
                             pass;
                         self.__place_tetromino();
                     elif event.key == pg.K_ESCAPE:
-                        self.running = False;
+                        self.__running = False;
                 elif event.type == pg.KEYUP:
                     if event.key == pg.K_DOWN:
-                        self.fall_speed *= 3;
+                        self.__fall_speed *= 3;
 
             # Update counter from delta time
-            self.fall_counter += self.clock.tick(60);
+            self.__fall_counter += self.__clock.tick(60);
 
             # Update based on speed
-            if self.fall_counter >= self.fall_speed:
-                self.fall_counter -= self.fall_speed;
-                if not self.falling_tetromino.fall():
+            if self.__fall_counter >= self.__fall_speed:
+                self.__fall_counter -= self.__fall_speed;
+                if not self.__falling_tetromino.fall():
                     self.__place_tetromino();
 
             # Update Logic
@@ -71,46 +72,47 @@ class Pytris:
             pg.display.flip();
 
     def __generate_tetromino(self) -> tetromino.Tetromino:
-        if len(self.bucket) == 0:
-            self.bucket = list(tetromino.TetrominoType);
+        if len(self.__bucket) == 0:
+            self.__bucket = list(tetromino.TetrominoType);
 
-        rand_type = random.choice(self.bucket);
-        self.bucket.remove(rand_type);
+        rand_type = random.choice(self.__bucket);
+        self.__bucket.remove(rand_type);
 
         return tetromino.Tetromino(rand_type, self);
 
     def draw_screen(self):
-        self.screen.fill(self.background_color);
+        self.__screen.fill(self.__background_color);
 
         # Draw all already placed blocks
         for row in range(self.__height):
             for col in range(self.__width):
                 if self.__game_board[row, col]:
-                    rect = (col*self.block_size, row*self.block_size, self.block_size, self.block_size);
+                    rect = (col*self.__block_size, row*self.__block_size, 
+                            self.__block_size, self.__block_size);
                     self.__draw_border_square(self.__game_board[row, col], rect);
 
         # Draw falling tetromino as well
-        tet = self.falling_tetromino;
+        tet = self.__falling_tetromino;
         for row in range(4):
             board_y = tet.offset.y + row;
-            board_y *= self.block_size;
+            board_y *= self.__block_size;
             for col in range(4):
                 board_x = tet.offset.x + col;
-                board_x *= self.block_size;
+                board_x *= self.__block_size;
                 
                 if tet.shape[row, col]:
-                    rect = (board_x, board_y, self.block_size, self.block_size);
+                    rect = (board_x, board_y, self.__block_size, self.__block_size);
                     self.__draw_border_square(tet.color, rect);
 
     # Draws square with border
     def __draw_border_square(self, color, rect):
-        thick = self.block_size / 20;
+        thick = self.__block_size / 20;
         inner_rect = (rect[0]+thick, rect[1]+thick, rect[2]-(2*thick), rect[3]-(2*thick));
-        self.screen.fill(self.block_border_color, rect);
-        self.screen.fill(color, inner_rect);
+        self.__screen.fill(self.__block_border_color, rect);
+        self.__screen.fill(color, inner_rect);
 
     def __place_tetromino(self):
-        tet = self.falling_tetromino;
+        tet = self.__falling_tetromino;
         for row in range(4):
             board_y = tet.offset.y + row;
             for col in range(4):
@@ -119,8 +121,8 @@ class Pytris:
                     self.__game_board[int(board_y), int(board_x)] = tet.color;
 
         self.__check_board();
-        self.falling_tetromino = self.__generate_tetromino();
-        self.fall_counter = 0;
+        self.__falling_tetromino = self.__generate_tetromino();
+        self.__fall_counter = 0;
 
     def __check_board(self):
         for row in range(self.__height):
