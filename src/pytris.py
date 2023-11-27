@@ -8,7 +8,7 @@ class Pytris:
         # Board setup
         self.__width = int(board_size.x);
         self.__height = int(board_size.y);
-        self.game_board = np.full((self.__height, self.__width), None, dtype=tuple);
+        self.__game_board = np.full((self.__height, self.__width), None, dtype=tuple);
 
         # PyGame / Graphics setup
         pg.init();
@@ -85,9 +85,9 @@ class Pytris:
         # Draw all already placed blocks
         for row in range(self.__height):
             for col in range(self.__width):
-                if self.game_board[row, col]:
+                if self.__game_board[row, col]:
                     rect = (col*self.block_size, row*self.block_size, self.block_size, self.block_size);
-                    self.__draw_border_square(self.game_board[row, col], rect);
+                    self.__draw_border_square(self.__game_board[row, col], rect);
 
         # Draw falling tetromino as well
         tet = self.falling_tetromino;
@@ -116,7 +116,7 @@ class Pytris:
             for col in range(4):
                 board_x = tet.offset.x + col;
                 if tet.shape[row, col]:
-                    self.game_board[int(board_y), int(board_x)] = tet.color;
+                    self.__game_board[int(board_y), int(board_x)] = tet.color;
 
         self.__check_board();
         self.falling_tetromino = self.__generate_tetromino();
@@ -124,9 +124,9 @@ class Pytris:
 
     def __check_board(self):
         for row in range(self.__height):
-            if np.all(self.game_board[row] != None):
-                self.game_board[1:row+1, :] = self.game_board[0:row, :];
-                self.game_board[0, :] = None;
+            if np.all(self.__game_board[row] != None):
+                self.__game_board[1:row+1, :] = self.__game_board[0:row, :];
+                self.__game_board[0, :] = None;
 
     ####################################
     # Getters
@@ -139,3 +139,7 @@ class Pytris:
     @property
     def height(self):
         return self.__height;
+    
+    @property
+    def game_board(self):
+        return self.__game_board;
