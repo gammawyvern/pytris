@@ -21,7 +21,7 @@ class Pytris:
         self.__bucket = None;
         self.__falling_tetromino = None;
         self.__fps = 120;
-        self.__fall_speed = 1000;
+        self.__fall_interval = 1000;
         self.__fall_counter = 0;
         self.__running = False;
 
@@ -32,7 +32,7 @@ class Pytris:
         self.__game_board = np.full((self.__height, self.__width), None, dtype=tuple);
         self.__bucket = list(tetromino.TetrominoType);
         self.__falling_tetromino = self.__generate_tetromino();
-        self.__fall_speed = 1000;
+        self.__fall_interval = 1000;
 
         pg.init();
         self.__screen = pg.display.set_mode([
@@ -54,7 +54,7 @@ class Pytris:
                     if event.key == pg.K_UP:
                         self.__falling_tetromino.rotate();
                     elif event.key == pg.K_DOWN:
-                        self.__fall_speed /= 3;
+                        self.__fall_interval /= 3;
                     elif event.key == pg.K_RIGHT:
                         self.__falling_tetromino.shift(right=True);
                     elif event.key == pg.K_LEFT:
@@ -67,18 +67,16 @@ class Pytris:
                         self.__running = False;
                 elif event.type == pg.KEYUP:
                     if event.key == pg.K_DOWN:
-                        self.__fall_speed *= 3;
+                        self.__fall_interval *= 3;
 
-            # Update counter from delta time
+            # Update speed_counter
             self.__fall_counter += self.__clock.tick(self.__fps);
-
-            # Update based on speed
-            if self.__fall_counter >= self.__fall_speed:
-                self.__fall_counter -= self.__fall_speed;
+            if self.__fall_counter >= self.__fall_interval:
+                self.__fall_counter -= self.__fall_interval;
                 if not self.__falling_tetromino.fall():
                     self.__place_tetromino();
 
-            # Update Logic
+            # Update display
             self.__draw_screen();
             pg.display.flip();
 
