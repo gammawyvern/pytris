@@ -1,4 +1,5 @@
 Important Features:
+- Game end mechanic
 - Rotation system
 - Ghost block
 - Hold mechanic
