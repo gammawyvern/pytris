@@ -136,9 +136,9 @@ class Pytris:
         self.__fall_counter = 0;
 
     def __check_board(self):
-        for row in range(self.__height):
-            if np.all(self.__game_board[row] != None):
-                self.__game_board[1:row+1, :] = self.__game_board[0:row, :];
+        for row_index, row in enumerate(self.__game_board):
+            if np.all(row != None):
+                self.__game_board[1:row_index+1, :] = self.__game_board[0:row_index, :];
                 self.__game_board[0, :] = None;
 
     ####################################
