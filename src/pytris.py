@@ -8,28 +8,39 @@ class Pytris:
         # Board setup
         self.__width = int(board_size.x);
         self.__height = int(board_size.y);
-        # Board is array of colors (or None)
-        self.__game_board = np.full((self.__height, self.__width), None, dtype=tuple);
+        self.__game_board = None;
 
         # PyGame / Graphics setup
-        pg.init();
         self.__background_color = (25, 25, 25);
         self.__block_size = 30;
-        # I like how it looks with just gaps between blocks
         self.__block_border_color = self.__background_color;
+        self.__screen = None;
+        self.__clock = None;
+
+        # Misc setup
+        self.__bucket = None;
+        self.__falling_tetromino = None;
+        self.__fps = 120;
+        self.__fall_speed = 1000;
+        self.__fall_counter = 0;
+        self.__running = False;
+
+    def play(self):
+        if self.__running:
+            return;
+
+        self.__game_board = np.full((self.__height, self.__width), None, dtype=tuple);
+        self.__bucket = list(tetromino.TetrominoType);
+        self.__falling_tetromino = self.__generate_tetromino();
+        self.__fall_speed = 1000;
+
+        pg.init();
         self.__screen = pg.display.set_mode([
             self.__width*self.__block_size,
             self.__height*self.__block_size]);
         self.__clock = pg.time.Clock();
 
-        # Misc setup
-        self.__bucket = list(tetromino.TetrominoType);
-        self.__falling_tetromino = self.__generate_tetromino();
-        self.__fps = 120;
-        self.__fall_speed = 1000;
-        self.__fall_counter = 0;
-        self.__running = True;
-
+        self.__running = True
         self.__play();
         pg.quit();
 
@@ -59,7 +70,7 @@ class Pytris:
                         self.__fall_speed *= 3;
 
             # Update counter from delta time
-            self.__fall_counter += self.__clock.tick(60);
+            self.__fall_counter += self.__clock.tick(self.__fps);
 
             # Update based on speed
             if self.__fall_counter >= self.__fall_speed:
