@@ -79,7 +79,7 @@ class Pytris:
                     self.__place_tetromino();
 
             # Update Logic
-            self.draw_screen();
+            self.__draw_screen();
             pg.display.flip();
 
     def __generate_tetromino(self) -> tetromino.Tetromino:
@@ -91,7 +91,7 @@ class Pytris:
 
         return tetromino.Tetromino(rand_type, self);
 
-    def draw_screen(self):
+    def __draw_screen(self):
         self.__screen.fill(self.__background_color);
 
         # Draw all already placed blocks
