@@ -6,9 +6,9 @@ import tetromino;
 class Pytris:
     def __init__(self, board_size: pg.Vector2):
         # Board setup
-        self.width = int(board_size.x);
-        self.height = int(board_size.y);
-        self.game_board = np.full((self.height, self.width), None, dtype=tuple);
+        self.__width = int(board_size.x);
+        self.__height = int(board_size.y);
+        self.game_board = np.full((self.__height, self.__width), None, dtype=tuple);
 
         # PyGame / Graphics setup
         pg.init();
@@ -17,8 +17,8 @@ class Pytris:
         # I like how it looks with just gaps between blocks
         self.block_border_color = self.background_color;
         self.screen = pg.display.set_mode([
-            self.width*self.block_size,
-            self.height*self.block_size]);
+            self.__width*self.block_size,
+            self.__height*self.block_size]);
         self.clock = pg.time.Clock();
 
         # Misc setup
@@ -83,8 +83,8 @@ class Pytris:
         self.screen.fill(self.background_color);
 
         # Draw all already placed blocks
-        for row in range(self.height):
-            for col in range(self.width):
+        for row in range(self.__height):
+            for col in range(self.__width):
                 if self.game_board[row, col]:
                     rect = (col*self.block_size, row*self.block_size, self.block_size, self.block_size);
                     self.__draw_border_square(self.game_board[row, col], rect);
@@ -123,8 +123,19 @@ class Pytris:
         self.fall_counter = 0;
 
     def __check_board(self):
-        for row in range(self.height):
+        for row in range(self.__height):
             if np.all(self.game_board[row] != None):
                 self.game_board[1:row+1, :] = self.game_board[0:row, :];
                 self.game_board[0, :] = None;
 
+    ####################################
+    # Getters
+    ####################################
+
+    @property
+    def width(self):
+        return self.__width;
+
+    @property
+    def height(self):
+        return self.__height;
