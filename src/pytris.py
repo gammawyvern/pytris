@@ -17,8 +17,8 @@ class Pytris:
         # I like how it looks with just gaps between blocks
         self.block_border_color = self.background_color;
         self.screen = pg.display.set_mode([
-            self.block_size*self.width,
-            self.block_size*self.height]);
+            self.width*self.block_size,
+            self.height*self.block_size]);
         self.clock = pg.time.Clock();
 
         # Misc setup
