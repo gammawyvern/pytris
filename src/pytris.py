@@ -95,30 +95,35 @@ class Pytris:
         self.__screen.fill(self.__background_color);
 
         # Draw all already placed blocks
-        for row in range(self.__height):
-            for col in range(self.__width):
-                if self.__game_board[row, col]:
-                    rect = (col*self.__block_size, row*self.__block_size, 
-                            self.__block_size, self.__block_size);
-                    self.__draw_border_square(self.__game_board[row, col], rect);
+        for row_index, row in enumerate(self.__game_board):
+            for col_index, cell in enumerate(row):
+                if cell:
+                    rect = pg.Rect(col_index*self.__block_size, 
+                                   row_index*self.__block_size,
+                                   self.__block_size, self.__block_size);
+                    self.__draw_border_square(cell, rect);
 
         # Draw falling tetromino as well
         tet = self.__falling_tetromino;
-        for row in range(4):
-            board_y = tet.offset.y + row;
-            board_y *= self.__block_size;
-            for col in range(4):
-                board_x = tet.offset.x + col;
-                board_x *= self.__block_size;
-                
-                if tet.shape[row, col]:
-                    rect = (board_x, board_y, self.__block_size, self.__block_size);
+        for row_index, row in enumerate(tet.shape):
+            for col_index, cell in enumerate(row):
+                if cell:
+                    board_x = tet.offset.x + col_index;
+                    board_y = tet.offset.y + row_index;
+                    board_x *= self.__block_size;
+                    board_y *= self.__block_size;
+                    rect = pg.Rect(board_x, board_y,
+                                   self.__block_size, self.__block_size);
                     self.__draw_border_square(tet.color, rect);
 
-    # Draws square with border
-    def __draw_border_square(self, color: pg.Color, rect):
+    def __draw_border_square(self, color: pg.Color, rect: pg.Rect):
         thick = self.__block_size / 20;
-        inner_rect = (rect[0]+thick, rect[1]+thick, rect[2]-(2*thick), rect[3]-(2*thick));
+        inner_rect = pg.Rect.copy(rect);
+        inner_rect.x += thick;
+        inner_rect.y += thick;
+        inner_rect.width -= (2*thick);
+        inner_rect.height -= (2*thick);
+
         self.__screen.fill(self.__block_border_color, rect);
         self.__screen.fill(color, inner_rect);
 
