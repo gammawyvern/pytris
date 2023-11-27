@@ -11,9 +11,9 @@ class Pytris:
         self.__game_board = None;
 
         # PyGame / Graphics setup
-        self.__background_color = (25, 25, 25);
+        self.__background_color = pg.Color(25, 25, 25);
         self.__block_size = 30;
-        self.__block_border_color = self.__background_color;
+        self.__block_border_color = pg.Color(self.__background_color);
         self.__screen = None;
         self.__clock = None;
 
@@ -116,7 +116,7 @@ class Pytris:
                     self.__draw_border_square(tet.color, rect);
 
     # Draws square with border
-    def __draw_border_square(self, color, rect):
+    def __draw_border_square(self, color: pg.Color, rect):
         thick = self.__block_size / 20;
         inner_rect = (rect[0]+thick, rect[1]+thick, rect[2]-(2*thick), rect[3]-(2*thick));
         self.__screen.fill(self.__block_border_color, rect);

@@ -52,7 +52,7 @@ class Tetromino:
         self.__game = game;
         self.__type = tetromino_type;
         self.__shape = np.copy(tetromino_type.value[0]); 
-        self.__color = tetromino_type.value[1];
+        self.__color = pg.Color(tetromino_type.value[1]);
         self.__offset = pg.Vector2((self.__game.width/2)-2, 0);
 
     ####################################
@@ -133,7 +133,7 @@ class Tetromino:
 
     @property
     def color(self):
-        return tuple(self.__color);
+        return pg.Color(self.__color);
 
     ####################################
     # Copy thing
