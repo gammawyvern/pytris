@@ -124,11 +124,11 @@ class Pytris:
 
     def __place_tetromino(self):
         tet = self.__falling_tetromino;
-        for row in range(4):
-            board_y = tet.offset.y + row;
-            for col in range(4):
-                board_x = tet.offset.x + col;
-                if tet.shape[row, col]:
+        for row_index, row in enumerate(tet.shape):
+            for col_index, cell in enumerate(row):
+                if cell:
+                    board_x = tet.offset.x + col_index;
+                    board_y = tet.offset.y + row_index;
                     self.__game_board[int(board_y), int(board_x)] = tet.color;
 
         self.__check_board();
@@ -155,4 +155,5 @@ class Pytris:
     
     @property
     def game_board(self):
-        return self.__game_board;
+        return np.copy(self.__game_board);
+
