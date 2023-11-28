@@ -21,12 +21,18 @@ class Pytris:
 
         # Misc setup
         self.__bucket = None;
+        self.__queue_size = 2;
         self.__falling_tetromino = None;
         self.__held_tetromino = None;
+        self.__tetromino_queue = [];
         self.__fps = 120;
         self.__fall_interval = 1000;
         self.__fall_counter = 0;
         self.__running = False;
+
+    ####################################
+    # Setup Function
+    ####################################
 
     def play(self):
         if self.__running:
@@ -35,8 +41,10 @@ class Pytris:
         empty_board = [[None for col in range(self.__width)] for row in range(self.__height)]; 
         self.__game_board = np.array(empty_board);
         self.__bucket = list(tetromino.TetrominoType);
-        self.__falling_tetromino = self.__generate_tetromino();
         self.__fall_interval = 1000;
+
+        self.__falling_tetromino = self.__generate_tetromino();
+        self.__tetromino_queue = [self.__generate_tetromino() for piece in range(self.__queue_size)];
 
         pg.init();
         self.__screen = pg.display.set_mode([
@@ -47,6 +55,10 @@ class Pytris:
         self.__running = True
         self.__play();
         pg.quit();
+
+    ####################################
+    # Main Gameplay Loop Function
+    ####################################
 
     def __play(self):
         while self.__running:
@@ -90,6 +102,10 @@ class Pytris:
             # Update middle every frame
             pg.display.flip();
 
+    ####################################
+    # General Functions
+    ####################################
+
     def __generate_tetromino(self) -> tetromino.Tetromino:
         if len(self.__bucket) == 0:
             self.__bucket = list(tetromino.TetrominoType);
@@ -98,6 +114,33 @@ class Pytris:
         self.__bucket.remove(rand_type);
 
         return tetromino.Tetromino(rand_type, self);
+
+    def __place_tetromino(self):
+        tet = self.__falling_tetromino;
+        for row_index, row in enumerate(tet.shape):
+            for col_index, cell in enumerate(row):
+                if cell:
+                    board_x = tet.offset.x + col_index;
+                    board_y = tet.offset.y + row_index;
+                    self.__game_board[int(board_y), int(board_x)] = tet.color;
+
+        self.__clear_full_rows();
+        self.__falling_tetromino = self.__tetromino_queue.pop(0);
+        self.__tetromino_queue.append(self.__generate_tetromino());
+        self.__fall_counter = 0;
+
+    def __hold_tetromino(self):
+        pass;
+
+    def __clear_full_rows(self):
+        for row_index, row in enumerate(self.__game_board):
+            if np.all(row != None):
+                self.__game_board[1:row_index+1, :] = self.__game_board[0:row_index, :];
+                self.__game_board[0, :] = None;
+
+    ####################################
+    # Drawing functions
+    ####################################
 
     def __draw_screen(self):
         board_rect = pg.Rect(self.__padding, 0,
@@ -139,25 +182,6 @@ class Pytris:
 
         self.__screen.fill(self.__block_border_color, outer_rect);
         self.__screen.fill(color, inner_rect);
-
-    def __place_tetromino(self):
-        tet = self.__falling_tetromino;
-        for row_index, row in enumerate(tet.shape):
-            for col_index, cell in enumerate(row):
-                if cell:
-                    board_x = tet.offset.x + col_index;
-                    board_y = tet.offset.y + row_index;
-                    self.__game_board[int(board_y), int(board_x)] = tet.color;
-
-        self.__clear_full_rows();
-        self.__falling_tetromino = self.__generate_tetromino();
-        self.__fall_counter = 0;
-
-    def __clear_full_rows(self):
-        for row_index, row in enumerate(self.__game_board):
-            if np.all(row != None):
-                self.__game_board[1:row_index+1, :] = self.__game_board[0:row_index, :];
-                self.__game_board[0, :] = None;
 
     ####################################
     # Getters
