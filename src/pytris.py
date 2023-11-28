@@ -104,18 +104,21 @@ class Pytris:
                                    self.__block_size, self.__block_size);
                     self.__draw_border_square(cell, rect);
 
-        # Draw falling tetromino as well
-        tet = self.__falling_tetromino;
-        for row_index, row in enumerate(tet.shape):
+        # Draw other tetrominos
+        self.__draw_tetromino(self.__falling_tetromino.get_ghost());
+        self.__draw_tetromino(self.__falling_tetromino);
+
+    def __draw_tetromino(self, tetromino):
+        for row_index, row in enumerate(tetromino.shape):
             for col_index, cell in enumerate(row):
                 if cell:
-                    board_x = tet.offset.x + col_index;
-                    board_y = tet.offset.y + row_index;
+                    board_x = tetromino.offset.x + col_index;
+                    board_y = tetromino.offset.y + row_index;
                     board_x *= self.__block_size;
                     board_y *= self.__block_size;
                     rect = pg.Rect(board_x, board_y,
                                    self.__block_size, self.__block_size);
-                    self.__draw_border_square(tet.color, rect);
+                    self.__draw_border_square(tetromino.color, rect);
 
     def __draw_border_square(self, color: pg.Color, rect: pg.Rect):
         thick = self.__block_size / 20;

@@ -123,7 +123,7 @@ class Tetromino:
 
     def get_ghost(self):
         ghost = copy.copy(self);
-        ghost.__color = pg.Color(255, 255, 255, a=50);
+        ghost.__color = pg.Color(255, 255, 255);
         while ghost.fall():
             pass;
 
