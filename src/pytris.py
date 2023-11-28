@@ -19,6 +19,10 @@ class Pytris:
         self.__board_rect = pg.Rect(self.__padding, 0,
                                     self.__block_size*self.__width,
                                     self.__block_size*self.__height);
+        self.__left_padding = pg.Rect(0, 0,
+                                      self.__padding, self.__padding);
+        self.__right_padding = pg.Rect(self.__padding + self.__board_rect.x, 0,
+                                       self.__padding, self.__padding);
         self.__screen = None;
         self.__clock = None;
 
@@ -52,6 +56,7 @@ class Pytris:
         self.__screen = pg.display.set_mode([
             (self.__width*self.__block_size) + (2 * self.__padding),
             (self.__height*self.__block_size)]);
+        self.__screen.fill(self.__padding_color);
         self.__clock = pg.time.Clock();
 
         self.__running = True
@@ -140,11 +145,12 @@ class Pytris:
             self.__held_tetromino = self.__falling_tetromino;
             self.__falling_tetromino = self.__get_next_tetromino(); 
         else:
+            self.__falling_tetromino.reset();
             temp_tetromino = self.__held_tetromino;
             self.__held_tetromino = self.__falling_tetromino;
             self.__falling_tetromino = temp_tetromino;
 
-        self.__falling_tetromino.reset();
+        self.__draw_left_padding();
         self.__fall_counter = 0;
 
     def __clear_full_rows(self):
@@ -158,14 +164,14 @@ class Pytris:
     ####################################
 
     def __draw_screen(self):
-        self.__screen.fill(self.__padding_color);
         self.__screen.fill(self.__background_color, self.__board_rect);
 
         # Draw all already placed blocks
         for row_index, row in enumerate(self.__game_board):
             for col_index, block in enumerate(row):
                 if block:
-                    self.__draw_border_square(block, pg.Vector2(col_index, row_index));
+                    self.__draw_board_square(block, self.__block_border_color, 
+                                             pg.Vector2(col_index, row_index));
 
         # Draw other tetrominos
         self.__draw_tetromino(self.__falling_tetromino.get_ghost());
@@ -178,22 +184,49 @@ class Pytris:
                     board_x = tetromino.offset.x + col_index;
                     board_y = tetromino.offset.y + row_index;
                     pos = pg.Vector2(board_x, board_y);
-                    self.__draw_border_square(tetromino.color, pos);
+                    self.__draw_board_square(tetromino.color,
+                                             self.__block_border_color, 
+                                             pos);
 
-    def __draw_border_square(self, color: pg.Color, board_pos: pg.Vector2):
-        border_size = self.__block_size / 20;
-        outer_rect = pg.Rect((board_pos.x*self.__block_size) + self.__padding, 
-                             (board_pos.y*self.__block_size),
-                             self.__block_size, self.__block_size);
+    def __draw_square(self, color: pg.Color, border_color: pg.Color, 
+                      board_pos: pg.Vector2, size: float):
+        border_size = size / 20;
+        outer_rect = pg.Rect(board_pos.x, board_pos.y,
+                             size, size);
+        inner_rect = pg.Rect(board_pos.x + border_size, board_pos.y + border_size,
+                             size - (2*border_size), size - (2*border_size));
 
-        inner_rect = pg.Rect.copy(outer_rect);
-        inner_rect.x += border_size;
-        inner_rect.y += border_size;
-        inner_rect.width -= (2*border_size);
-        inner_rect.height -= (2*border_size);
-
-        self.__screen.fill(self.__block_border_color, outer_rect);
+        self.__screen.fill(border_color, outer_rect);
         self.__screen.fill(color, inner_rect);
+        
+    def __draw_board_square(self, color: pg.Color, border_color: pg.Color, 
+                            position: pg.Vector2):
+        screen_x = (position.x * self.__block_size) + self.__padding;
+        screen_y = (position.y * self.__block_size);
+        self.__draw_square(color, border_color, 
+                           pg.Vector2(screen_x, screen_y), self.__block_size);
+
+    def __draw_left_padding(self):
+        self.__screen.fill(self.__padding_color, self.__left_padding);
+
+        if self.__held_tetromino != None:
+            for row_index, row in enumerate(self.__held_tetromino.shape):
+                for col_index, block in enumerate(row):
+                    if block:
+                        # TODO not fully dynamic currently
+                        padding_block = self.__padding / 8;
+                        screen_x = padding_block + (padding_block * col_index);
+                        screen_y = padding_block + (padding_block * row_index);
+                        self.__draw_square(self.__held_tetromino.color,
+                                           self.__padding_color,
+                                           pg.Vector2(screen_x, screen_y),
+                                           padding_block);
+
+        pg.display.update(self.__left_padding);
+
+
+    def __draw_right_padding(self):
+        pg.display.udpate(self.__right_padding);
 
     ####################################
     # Getters
