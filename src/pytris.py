@@ -74,6 +74,7 @@ class Pytris:
                         self.__falling_tetromino.rotate(right=True);
                     elif event.key == pg.K_DOWN:
                         self.__fall_interval /= 3;
+                        self.__fall_counter /= 3;
                     elif event.key == pg.K_RIGHT:
                         self.__falling_tetromino.shift(right=True);
                     elif event.key == pg.K_LEFT:
@@ -82,12 +83,15 @@ class Pytris:
                         while self.__falling_tetromino.fall():
                             pass;
                         self.__place_tetromino();
+                    elif event.key == pg.K_LSHIFT:
+                        self.__hold_tetromino();
                     elif event.key == pg.K_ESCAPE:
                         self.__running = False;
                         return;
                 elif event.type == pg.KEYUP:
                     if event.key == pg.K_DOWN:
                         self.__fall_interval *= 3;
+                        self.__fall_counter *= 3;
 
             # Update speed_counter
             self.__fall_counter += self.__clock.tick(self.__fps);
@@ -132,7 +136,16 @@ class Pytris:
         self.__fall_counter = 0;
 
     def __hold_tetromino(self):
-        pass;
+        if self.__held_tetromino == None:
+            self.__held_tetromino = self.__falling_tetromino;
+            self.__falling_tetromino = self.__get_next_tetromino(); 
+        else:
+            temp_tetromino = self.__held_tetromino;
+            self.__held_tetromino = self.__falling_tetromino;
+            self.__falling_tetromino = temp_tetromino;
+
+        self.__falling_tetromino.reset();
+        self.__fall_counter = 0;
 
     def __clear_full_rows(self):
         for row_index, row in enumerate(self.__game_board):
