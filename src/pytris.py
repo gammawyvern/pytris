@@ -29,7 +29,8 @@ class Pytris:
         if self.__running:
             return;
 
-        self.__game_board = np.full((self.__height, self.__width), None, dtype=tuple);
+        empty_board = [[None for col in range(self.__width)] for row in range(self.__height)]; 
+        self.__game_board = np.array(empty_board);
         self.__bucket = list(tetromino.TetrominoType);
         self.__falling_tetromino = self.__generate_tetromino();
         self.__fall_interval = 1000;
@@ -50,9 +51,10 @@ class Pytris:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     self.__running = False;
+                    return;
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_UP:
-                        self.__falling_tetromino.rotate();
+                        self.__falling_tetromino.rotate(right=True);
                     elif event.key == pg.K_DOWN:
                         self.__fall_interval /= 3;
                     elif event.key == pg.K_RIGHT:
@@ -65,6 +67,7 @@ class Pytris:
                         self.__place_tetromino();
                     elif event.key == pg.K_ESCAPE:
                         self.__running = False;
+                        return;
                 elif event.type == pg.KEYUP:
                     if event.key == pg.K_DOWN:
                         self.__fall_interval *= 3;
