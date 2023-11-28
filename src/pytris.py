@@ -16,6 +16,9 @@ class Pytris:
         self.__padding = 4*self.__block_size;
         self.__padding_color = pg.Color(100, 100, 100);
         self.__block_border_color = pg.Color(self.__background_color);
+        self.__board_rect = pg.Rect(self.__padding, 0,
+                                    self.__block_size*self.__width,
+                                    self.__block_size*self.__height);
         self.__screen = None;
         self.__clock = None;
 
@@ -43,8 +46,7 @@ class Pytris:
         self.__bucket = list(tetromino.TetrominoType);
         self.__fall_interval = 1000;
 
-        self.__falling_tetromino = self.__generate_tetromino();
-        self.__tetromino_queue = [self.__generate_tetromino() for piece in range(self.__queue_size)];
+        self.__falling_tetromino = self.__get_next_tetromino();
 
         pg.init();
         self.__screen = pg.display.set_mode([
@@ -96,11 +98,7 @@ class Pytris:
 
             # Update display
             self.__draw_screen();
-            # TODO could optimize to only update neccesary parts of screen
-            # Only update right when piece is placed
-            # Only update left when block is held
-            # Update middle every frame
-            pg.display.flip();
+            pg.display.update(self.__board_rect);
 
     ####################################
     # General Functions
@@ -115,6 +113,11 @@ class Pytris:
 
         return tetromino.Tetromino(rand_type, self);
 
+    def __get_next_tetromino(self) -> tetromino.Tetromino:
+        while len(self.__tetromino_queue) <= self.__queue_size:
+            self.__tetromino_queue.append(self.__generate_tetromino());
+        return self.__tetromino_queue.pop(0);
+
     def __place_tetromino(self):
         tet = self.__falling_tetromino;
         for row_index, row in enumerate(tet.shape):
@@ -125,8 +128,7 @@ class Pytris:
                     self.__game_board[int(board_y), int(board_x)] = tet.color;
 
         self.__clear_full_rows();
-        self.__falling_tetromino = self.__tetromino_queue.pop(0);
-        self.__tetromino_queue.append(self.__generate_tetromino());
+        self.__falling_tetromino = self.__get_next_tetromino();
         self.__fall_counter = 0;
 
     def __hold_tetromino(self):
@@ -143,11 +145,8 @@ class Pytris:
     ####################################
 
     def __draw_screen(self):
-        board_rect = pg.Rect(self.__padding, 0,
-                             self.__block_size*self.__width,
-                             self.__block_size*self.__height);
         self.__screen.fill(self.__padding_color);
-        self.__screen.fill(self.__background_color, board_rect);
+        self.__screen.fill(self.__background_color, self.__board_rect);
 
         # Draw all already placed blocks
         for row_index, row in enumerate(self.__game_board):
