@@ -12,14 +12,20 @@ class Pytris:
 
         # PyGame / Graphics setup
         self.__background_color = pg.Color(25, 25, 25);
-        self.__block_size = 30;
+        self.__block_size = 32;
+        self.__padding = 4*self.__block_size;
+        self.__padding_color = pg.Color(100, 100, 100);
         self.__block_border_color = pg.Color(self.__background_color);
+        self.__graphic_board_rect = pg.Rect(self.__padding, 0,
+                                            self.__block_size*self.__width,
+                                            self.__block_size*self.__height);
         self.__screen = None;
         self.__clock = None;
 
         # Misc setup
         self.__bucket = None;
         self.__falling_tetromino = None;
+        self.__held_tetromino = None;
         self.__fps = 120;
         self.__fall_interval = 1000;
         self.__fall_counter = 0;
@@ -37,8 +43,8 @@ class Pytris:
 
         pg.init();
         self.__screen = pg.display.set_mode([
-            self.__width*self.__block_size,
-            self.__height*self.__block_size]);
+            (self.__width*self.__block_size) + (2 * self.__padding),
+            (self.__height*self.__block_size)]);
         self.__clock = pg.time.Clock();
 
         self.__running = True
@@ -81,6 +87,10 @@ class Pytris:
 
             # Update display
             self.__draw_screen();
+            # TODO could optimize to only update neccesary parts of screen
+            # Only update right when piece is placed
+            # Only update left when block is held
+            # Update middle every frame
             pg.display.flip();
 
     def __generate_tetromino(self) -> tetromino.Tetromino:
@@ -93,16 +103,14 @@ class Pytris:
         return tetromino.Tetromino(rand_type, self);
 
     def __draw_screen(self):
-        self.__screen.fill(self.__background_color);
+        self.__screen.fill(self.__padding_color);
+        self.__screen.fill(self.__background_color, self.__graphic_board_rect);
 
         # Draw all already placed blocks
         for row_index, row in enumerate(self.__game_board):
-            for col_index, cell in enumerate(row):
-                if cell:
-                    rect = pg.Rect(col_index*self.__block_size, 
-                                   row_index*self.__block_size,
-                                   self.__block_size, self.__block_size);
-                    self.__draw_border_square(cell, rect);
+            for col_index, block in enumerate(row):
+                if block:
+                    self.__draw_border_square(block, pg.Vector2(col_index, row_index));
 
         # Draw other tetrominos
         self.__draw_tetromino(self.__falling_tetromino.get_ghost());
@@ -110,25 +118,26 @@ class Pytris:
 
     def __draw_tetromino(self, tetromino):
         for row_index, row in enumerate(tetromino.shape):
-            for col_index, cell in enumerate(row):
-                if cell:
+            for col_index, block in enumerate(row):
+                if block:
                     board_x = tetromino.offset.x + col_index;
                     board_y = tetromino.offset.y + row_index;
-                    board_x *= self.__block_size;
-                    board_y *= self.__block_size;
-                    rect = pg.Rect(board_x, board_y,
-                                   self.__block_size, self.__block_size);
-                    self.__draw_border_square(tetromino.color, rect);
+                    pos = pg.Vector2(board_x, board_y);
+                    self.__draw_border_square(tetromino.color, pos);
 
-    def __draw_border_square(self, color: pg.Color, rect: pg.Rect):
-        thick = self.__block_size / 20;
-        inner_rect = pg.Rect.copy(rect);
-        inner_rect.x += thick;
-        inner_rect.y += thick;
-        inner_rect.width -= (2*thick);
-        inner_rect.height -= (2*thick);
+    def __draw_border_square(self, color: pg.Color, board_pos: pg.Vector2):
+        border_size = self.__block_size / 20;
+        outer_rect = pg.Rect((board_pos.x*self.__block_size) + self.__padding, 
+                             (board_pos.y*self.__block_size),
+                             self.__block_size, self.__block_size);
 
-        self.__screen.fill(self.__block_border_color, rect);
+        inner_rect = pg.Rect.copy(outer_rect);
+        inner_rect.x += border_size;
+        inner_rect.y += border_size;
+        inner_rect.width -= (2*border_size);
+        inner_rect.height -= (2*border_size);
+
+        self.__screen.fill(self.__block_border_color, outer_rect);
         self.__screen.fill(color, inner_rect);
 
     def __place_tetromino(self):
