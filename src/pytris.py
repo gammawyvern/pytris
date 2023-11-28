@@ -137,11 +137,11 @@ class Pytris:
                     board_y = tet.offset.y + row_index;
                     self.__game_board[int(board_y), int(board_x)] = tet.color;
 
-        self.__check_board();
+        self.__clear_full_rows();
         self.__falling_tetromino = self.__generate_tetromino();
         self.__fall_counter = 0;
 
-    def __check_board(self):
+    def __clear_full_rows(self):
         for row_index, row in enumerate(self.__game_board):
             if np.all(row != None):
                 self.__game_board[1:row_index+1, :] = self.__game_board[0:row_index, :];
