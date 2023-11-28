@@ -55,6 +55,10 @@ class Tetromino:
         self.__color = pg.Color(tetromino_type.value[1]);
         self.__offset = pg.Vector2((self.__game.width/2)-2, 0);
 
+    def reset(self):
+        self.__shape = np.copy(self.__type.value[0]); 
+        self.__offset = pg.Vector2((self.__game.width/2)-2, 0);
+
     ####################################
     # Public movement wrapper functions.
     # Only moves Tetromino if movement
