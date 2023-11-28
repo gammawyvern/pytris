@@ -16,9 +16,6 @@ class Pytris:
         self.__padding = 4*self.__block_size;
         self.__padding_color = pg.Color(100, 100, 100);
         self.__block_border_color = pg.Color(self.__background_color);
-        self.__graphic_board_rect = pg.Rect(self.__padding, 0,
-                                            self.__block_size*self.__width,
-                                            self.__block_size*self.__height);
         self.__screen = None;
         self.__clock = None;
 
@@ -103,8 +100,11 @@ class Pytris:
         return tetromino.Tetromino(rand_type, self);
 
     def __draw_screen(self):
+        board_rect = pg.Rect(self.__padding, 0,
+                             self.__block_size*self.__width,
+                             self.__block_size*self.__height);
         self.__screen.fill(self.__padding_color);
-        self.__screen.fill(self.__background_color, self.__graphic_board_rect);
+        self.__screen.fill(self.__background_color, board_rect);
 
         # Draw all already placed blocks
         for row_index, row in enumerate(self.__game_board):
