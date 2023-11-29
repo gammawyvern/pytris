@@ -1,9 +1,26 @@
+"""Allows creation of and control of Tetrominos.
+
+This module allows for creating and controlling of 
+Tetrominos for use in the Pytris game. Tetrominos 
+hold a reference to a game, but are not actually 
+on the board in that game. Instead they are overlayed 
+onto the board and check the board for collisions.
+
+"""
+
 import pygame as pg;
 import numpy as np;
 import enum;
 import copy;
 
 class TetrominoType(enum.Enum):
+    """Represents each type of Tetromino in Tetris.
+        
+    Each variant's value is a tuple. The first element 
+    is a 4x4 array with its respective Tetromino's shape 
+    in its default orientation; the second element is
+    it's respective Tetromino color as an RGB tuple.
+    """
 
     I = ([[0, 1, 0, 0],
           [0, 1, 0, 0],
@@ -48,7 +65,30 @@ class TetrominoType(enum.Enum):
           (255, 0, 0));
 
 class Tetromino:
+    """Represents a controllable Tetromino in a Pytris game.
+
+    Tetromino is created from base shape from TetrominoType.
+    It always holds a reference to a valid game that it uses
+    for collision checks. It also spawns at the top middle 
+    of the game.
+
+    Use fall(), shift(), rotate(), or reset() to control 
+    Tetromino. It will only perform the action if it results 
+    in no collision. reset() will return Tetromino to default 
+    orientiation and position at top of screen.
+    """
+
     def __init__(self, tetromino_type: TetrominoType, game):
+        """Initializes a Tetromino from a specified type.
+
+        Args:
+            tetromino_type:
+                One of the 7 TetrominoType variants that 
+                corresponds to a Tetromino.
+            game:
+                A Pytris instance that the Tetromino will 
+                use for collision detection.
+        """
         self.__game = game;
         self.__type = tetromino_type;
         self.__shape = np.copy(tetromino_type.value[0]); 
@@ -56,6 +96,7 @@ class Tetromino:
         self.__offset = pg.Vector2((self.__game.width/2)-2, 0);
 
     def reset(self):
+        """Resets Tetromino to post initialization state."""
         self.__shape = np.copy(self.__type.value[0]); 
         self.__offset = pg.Vector2((self.__game.width/2)-2, 0);
 
@@ -66,12 +107,51 @@ class Tetromino:
     ####################################
  
     def fall(self, right=True) -> bool:
+        """Moves Tetromino one block down.
+
+        Args:
+            right: Ignored.
+
+        Returns:
+            bool:
+                True if Tetromino was moved (no collision occured)
+                False if Tetromino was not moved (collision occured)
+        """
         return self.__move_with_collision(Tetromino.__fall, right=right);
 
     def rotate(self, right=True) -> bool:
+        """Rotates Tetromino shape 90 degrees.
+
+        Rotates the shape of the Tetromino within its 4x4 array 
+        if there is no collision.
+
+        Args:
+            right:
+                True: Rotate 90 degrees clockwise.
+                False: Rotate 90 degrees counter-clockwise.
+
+        Returns:
+            bool:
+                True if Tetromino was moved (no collision occured).
+                False if Tetromino was not moved (collision occured).
+        """
+        return self.__move_with_collision(Tetromino.__fall, right=right);
         return self.__move_with_collision(Tetromino.__rotate, right=right);
 
     def shift(self, right=True) -> bool:
+        """Moves Tetromino one block right or left
+
+        Args:
+            right:
+                True: Move Tetromino right.
+                False: Move Tetromino left.
+
+        Returns:
+            bool:
+                True if Tetromino was moved (no collision occured).
+                False if Tetromino was not moved (collision occured).
+        """
+        return self.__move_with_collision(Tetromino.__fall, right=right);
         return self.__move_with_collision(Tetromino.__shift, right=right);
 
     ####################################
@@ -81,6 +161,22 @@ class Tetromino:
     ####################################
 
     def __move_with_collision(self, move_func, right=True) -> bool:
+        """Runs movement function if no collision will occur.
+
+        Creates a copy of the Tetromino, and runs the passed private
+        movement function on the copy. If that copy then has no 
+        collisions, the movement is also run on the original
+        Tetromino.
+
+        Args:
+            move_func: __fall(), __shift(), or __rotate()
+            right: bool passed to move_func
+
+        Returns:
+            bool: 
+                True if Tetromino was moved (no collision occured).
+                False if Tetromino was not moved (collision occured).
+        """
         copy_tet: Tetromino = copy.copy(self);
         move_func(copy_tet, right=right);
 
@@ -126,6 +222,16 @@ class Tetromino:
     ####################################
 
     def get_ghost(self):
+        """Creates a representative ghost Tetromino.
+
+        A ghost Tetromino represents where the Tetromio 
+        will eventually be placed if the Tetromino is not moved.
+        The color is set to white.
+
+        Returns:
+            Tetromino: 
+                A representative white ghost Tetromino
+        """
         ghost = copy.copy(self);
         ghost.__color = pg.Color(255, 255, 255);
         while ghost.fall():
@@ -139,6 +245,13 @@ class Tetromino:
 
     @property
     def offset(self) -> pg.Vector2:
+        """Returns a copy of the Tetromino board position.
+
+        Returns:
+            pygame.Vector2:
+                Represents the top left corner of the 4x4 Tetromino 
+                shape array relative to the game board it holds.
+        """
         return pg.Vector2(
             self.__offset.x,
             self.__offset.y
@@ -146,13 +259,37 @@ class Tetromino:
 
     @property
     def shape(self) -> np.ndarray:
+        """Returns a copy of the Tetromino shape array
+
+        Returns:
+            numpy.ndarray:
+                Contains the shape of the Tetromino in a 4x4 numpy array.
+                Empty cells are indicated by a 0, while the blocks are
+                represented by a 1.
+        """
         return np.copy(self.__shape);
 
     @property
     def color(self) -> pg.Color:
+        """Returns a copy of the Tetromino color.
+
+        Returns:
+            pygame.Color:
+                Color that each block in the Tetromino shape should be.
+        """
         return pg.Color(self.__color);
 
     def get_middle(self) -> pg.Vector2:
+        """Returns offset of middle of Tetromino shape. 
+
+        Checks Tetromino shape to find the center of the actual piece, 
+        as many shapes have empty rows and/or columns.
+
+        Returns:
+            pygame.Vector2:
+                Vector that holds the x and y center of the Tetromino shape.
+                It is not by array index, but by the offset from the side.
+        """
         left = 0;
         while np.all(self.shape[:, left] == 0):
             left += 1;
@@ -175,6 +312,7 @@ class Tetromino:
     ####################################
 
     def __copy__(self):
+        """Deep copies Tetromino."""
         copy_tet = Tetromino(self.__type, self.__game);
         copy_tet.__offset = self.offset;
         copy_tet.__shape = self.shape;
