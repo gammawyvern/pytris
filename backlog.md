@@ -1,9 +1,9 @@
 Important Features:
-- Game end mechanic
-- Rotation system
-- Ghost block
-- Hold mechanic
-- Look-ahead mechanic
+- [ ] Game end mechanic
+- [ ] Rotation system
+- [x] Ghost block
+- [x] Hold mechanic
+- [x] Look-ahead mechanic
 
 Smaller Features:
 - Score system
