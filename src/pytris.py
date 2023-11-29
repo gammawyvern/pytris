@@ -224,9 +224,13 @@ class Pytris:
                 for col_index, block in enumerate(row):
                     if block:
                         padding_block = self.__padding / 8;
-                        screen_x = (self.__padding / 2) - (2 * padding_block);
-                        screen_x += (padding_block * col_index);
-                        screen_y = (2 * padding_block) + (padding_block * row_index);
+                        tet_center = self.__held_tetromino.get_middle();
+
+                        screen_x = 2 + col_index + (2 - tet_center.x);
+                        screen_x *= padding_block;
+                        screen_y = 2 + row_index + (2 - tet_center.y);
+                        screen_y *= padding_block;
+
                         self.__draw_square(self.__held_tetromino.color,
                                            self.__padding_color,
                                            pg.Vector2(screen_x, screen_y),
@@ -243,10 +247,13 @@ class Pytris:
                 for col_index, block in enumerate(row):
                     if block:
                         padding_block = self.__padding / 8;
-                        screen_x = self.__right_padding.x + (self.__padding / 2) - (2 * padding_block) 
-                        screen_x += (padding_block * col_index);
-                        screen_y = (2 * padding_block) + (padding_block * row_index);
-                        screen_y += (5 * padding_block * tet_index);
+                        tet_center = tet.get_middle();
+                        screen_x = 2 + col_index + (2 - tet_center.x);
+                        screen_x *= padding_block;
+                        screen_x += self.__right_padding.x;
+                        screen_y = 2 + row_index + (2 - tet_center.y);
+                        screen_y += (5 * tet_index);
+                        screen_y *= padding_block;
                         self.__draw_square(tet.color, self.__padding_color,
                                         pg.Vector2(screen_x, screen_y),
                                         padding_block);

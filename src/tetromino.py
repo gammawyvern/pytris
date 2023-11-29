@@ -138,19 +138,37 @@ class Tetromino:
     ####################################
 
     @property
-    def offset(self):
+    def offset(self) -> pg.Vector2:
         return pg.Vector2(
             self.__offset.x,
             self.__offset.y
         )
 
     @property
-    def shape(self):
+    def shape(self) -> np.ndarray:
         return np.copy(self.__shape);
 
     @property
-    def color(self):
+    def color(self) -> pg.Color:
         return pg.Color(self.__color);
+
+    def get_middle(self) -> pg.Vector2:
+        left = 0;
+        while np.all(self.shape[:, left] == 0):
+            left += 1;
+        right = 3;
+        while np.all(self.shape[:, right] == 0):
+            right -= 1;
+        top = 0;
+        while np.all(self.shape[top, :] == 0):
+            top += 1;
+        bottom = 3;
+        while np.all(self.shape[bottom, :] == 0):
+            bottom -= 1;
+
+        center = pg.Vector2((left + right + 1) / 2,
+                            (top + bottom + 1) / 2);
+        return center;
 
     ####################################
     # Copy thing
