@@ -20,9 +20,9 @@ class Pytris:
                                     self.__block_size*self.__width,
                                     self.__block_size*self.__height);
         self.__left_padding = pg.Rect(0, 0,
-                                      self.__padding, self.__padding);
-        self.__right_padding = pg.Rect(self.__padding + self.__board_rect.x, 0,
-                                       self.__padding, self.__padding);
+                                      self.__padding, self.__board_rect.height);
+        self.__right_padding = pg.Rect(self.__padding + self.__board_rect.width, 0,
+                                       self.__padding, self.__board_rect.height);
         self.__screen = None;
         self.__clock = None;
 
@@ -54,9 +54,10 @@ class Pytris:
 
         pg.init();
         self.__screen = pg.display.set_mode([
-            (self.__width*self.__block_size) + (2 * self.__padding),
-            (self.__height*self.__block_size)]);
+            (self.__padding + self.__board_rect.width + self.__padding),
+            (self.__board_rect.height)]);
         self.__screen.fill(self.__padding_color);
+        pg.display.flip();
         self.__clock = pg.time.Clock();
 
         self.__running = True
