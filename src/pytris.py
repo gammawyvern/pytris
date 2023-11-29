@@ -31,6 +31,7 @@ class Pytris:
         self.__queue_size = 3;
         self.__falling_tetromino = None;
         self.__held_tetromino = None;
+        self.__can_hold = True;
         self.__tetromino_queue = [];
         self.__fps = 120;
         self.__fall_interval = 1000;
@@ -143,8 +144,12 @@ class Pytris:
         self.__clear_full_rows();
         self.__falling_tetromino = self.__get_next_tetromino();
         self.__fall_counter = 0;
+        self.__can_hold = True;
 
     def __hold_tetromino(self):
+        if not self.__can_hold:
+            return;
+
         if self.__held_tetromino == None:
             self.__held_tetromino = self.__falling_tetromino;
             self.__falling_tetromino = self.__get_next_tetromino(); 
@@ -156,6 +161,7 @@ class Pytris:
 
         self.__draw_left_padding();
         self.__fall_counter = 0;
+        self.__can_hold = False;
 
     def __clear_full_rows(self):
         for row_index, row in enumerate(self.__game_board):
