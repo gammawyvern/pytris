@@ -11,10 +11,10 @@ class Pytris:
         self.__game_board = None;
 
         # PyGame / Graphics setup
-        self.__background_color = pg.Color(25, 25, 25);
+        self.__background_color = pg.Color(35, 35, 35);
         self.__block_size = 32;
-        self.__padding = 4*self.__block_size;
-        self.__padding_color = pg.Color(100, 100, 100);
+        self.__padding = 4 * self.__block_size;
+        self.__padding_color = pg.Color(20, 20, 20);
         self.__block_border_color = pg.Color(self.__background_color);
         self.__board_rect = pg.Rect(self.__padding, 0,
                                     self.__block_size*self.__width,
@@ -28,7 +28,7 @@ class Pytris:
 
         # Misc setup
         self.__bucket = None;
-        self.__queue_size = 2;
+        self.__queue_size = 3;
         self.__falling_tetromino = None;
         self.__held_tetromino = None;
         self.__tetromino_queue = [];
@@ -45,12 +45,10 @@ class Pytris:
         if self.__running:
             return;
 
-        empty_board = [[None for col in range(self.__width)] for row in range(self.__height)]; 
+        empty_board = [[None for _ in range(self.__width)] for _ in range(self.__height)]; 
         self.__game_board = np.array(empty_board);
         self.__bucket = list(tetromino.TetrominoType);
         self.__fall_interval = 1000;
-
-        self.__falling_tetromino = self.__get_next_tetromino();
 
         pg.init();
         self.__screen = pg.display.set_mode([
@@ -59,6 +57,8 @@ class Pytris:
         self.__screen.fill(self.__padding_color);
         pg.display.flip();
         self.__clock = pg.time.Clock();
+
+        self.__falling_tetromino = self.__get_next_tetromino();
 
         self.__running = True
         self.__play();
@@ -126,7 +126,10 @@ class Pytris:
     def __get_next_tetromino(self) -> tetromino.Tetromino:
         while len(self.__tetromino_queue) <= self.__queue_size:
             self.__tetromino_queue.append(self.__generate_tetromino());
-        return self.__tetromino_queue.pop(0);
+        next_tet = self.__tetromino_queue.pop(0);
+
+        self.__draw_right_padding();
+        return next_tet;
 
     def __place_tetromino(self):
         tet = self.__falling_tetromino;
@@ -214,10 +217,10 @@ class Pytris:
             for row_index, row in enumerate(self.__held_tetromino.shape):
                 for col_index, block in enumerate(row):
                     if block:
-                        # TODO not fully dynamic currently
                         padding_block = self.__padding / 8;
-                        screen_x = padding_block + (padding_block * col_index);
-                        screen_y = padding_block + (padding_block * row_index);
+                        screen_x = (self.__padding / 2) - (2 * padding_block);
+                        screen_x += (padding_block * col_index);
+                        screen_y = (2 * padding_block) + (padding_block * row_index);
                         self.__draw_square(self.__held_tetromino.color,
                                            self.__padding_color,
                                            pg.Vector2(screen_x, screen_y),
@@ -227,7 +230,22 @@ class Pytris:
 
 
     def __draw_right_padding(self):
-        pg.display.udpate(self.__right_padding);
+        self.__screen.fill(self.__padding_color, self.__right_padding);
+
+        for tet_index, tet in enumerate(self.__tetromino_queue):
+            for row_index, row in enumerate(tet.shape):
+                for col_index, block in enumerate(row):
+                    if block:
+                        padding_block = self.__padding / 8;
+                        screen_x = self.__right_padding.x + (self.__padding / 2) - (2 * padding_block) 
+                        screen_x += (padding_block * col_index);
+                        screen_y = (2 * padding_block) + (padding_block * row_index);
+                        screen_y += (5 * padding_block * tet_index);
+                        self.__draw_square(tet.color, self.__padding_color,
+                                        pg.Vector2(screen_x, screen_y),
+                                        padding_block);
+
+        pg.display.update(self.__right_padding);
 
     ####################################
     # Getters
