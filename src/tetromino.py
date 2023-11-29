@@ -135,7 +135,6 @@ class Tetromino:
                 True if Tetromino was moved (no collision occured).
                 False if Tetromino was not moved (collision occured).
         """
-        return self.__move_with_collision(Tetromino.__fall, right=right);
         return self.__move_with_collision(Tetromino.__rotate, right=right);
 
     def shift(self, right=True) -> bool:
@@ -151,7 +150,6 @@ class Tetromino:
                 True if Tetromino was moved (no collision occured).
                 False if Tetromino was not moved (collision occured).
         """
-        return self.__move_with_collision(Tetromino.__fall, right=right);
         return self.__move_with_collision(Tetromino.__shift, right=right);
 
     ####################################
