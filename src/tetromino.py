@@ -93,12 +93,12 @@ class Tetromino:
         self.__type = tetromino_type;
         self.__shape = np.copy(tetromino_type.value[0]); 
         self.__color = pg.Color(tetromino_type.value[1]);
-        self.__offset = pg.Vector2((self.__game.width/2)-2, 0);
+        self.__offset = pg.Vector2(int(self.__game.width/2)-2, 0);
 
     def reset(self):
         """Resets Tetromino to post initialization state."""
         self.__shape = np.copy(self.__type.value[0]); 
-        self.__offset = pg.Vector2((self.__game.width/2)-2, 0);
+        self.__offset = pg.Vector2(int(self.__game.width/2)-2, 0);
 
     ####################################
     # Public movement wrapper functions.
