@@ -3,6 +3,10 @@
 Currently only allows creation and then playing. After calling play(),
 game runs until it ends through user input. There are no other
 external controls to stop or pause the game currently.
+
+Author: Keagen Talsma, Keri Lamberjack
+Version: 1.0
+Date: 12/8/23
 """
 import pygame as pg;
 import numpy as np;

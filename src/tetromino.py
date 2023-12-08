@@ -6,6 +6,9 @@ hold a reference to a game, but are not actually
 on the board in that game. Instead they are overlayed 
 onto the board and check the board for collisions.
 
+Author: Keagen Talsma, Keri Lamberjack
+Version: 1.0
+Date: 12/8/23
 """
 
 import pygame as pg;
