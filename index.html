@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pytris with Pyodide</title>
+    <script type="text/javascript" src="https://pyodide-cdn2.iodide.io/v0.18.1/full/pyodide.js"></script>
+</head>
+<body>
+    <h1>Welcome to Pytris!</h1>
+
+    <script type="text/javascript">
+        pyodide.loadPackage(['numpy']).then(() => {
+            pyodide.runPython(`
+                print("Hello from Pyodide!")
+            `);
+        });
+    </script>
+</body>
+</html>
