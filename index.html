@@ -10,7 +10,8 @@
     <h1>Welcome to Pytris!</h1>
 
     <script type="text/javascript">
-        pyodide.loadPackage(['numpy']).then(() => {
+        // Ensure that pyodide is fully loaded before using it
+        window.languagePluginLoader.then(() => {
             pyodide.runPython(`
                 print("Hello from Pyodide!")
             `);
